@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Train Schedules</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Indian Railways Schedule</h1>
+        </header>
+
+        <!-- Inputs to modify variables -->
+        <div class="input-container">
+            <form action="/update" method="POST">
+                <label for="max_speed">Max speed permitted for all categories of train:</label>
+                <input type="number" id="max_speed" name="max_speed" value="130">
+                
+                <label for="high_priority_speed">High priority category train max speed:</label>
+                <input type="number" id="high_priority_speed" name="high_priority_speed" value="130">
+                
+                <label for="medium_priority_speed">Medium priority category train max speed:</label>
+                <input type="number" id="medium_priority_speed" name="medium_priority_speed" value="100">
+                
+                <label for="low_priority_speed">Low priority category train max speed:</label>
+                <input type="number" id="low_priority_speed" name="low_priority_speed" value="80">
+
+                <button type="submit">Update and Generate Plot</button>
+            </form>
+        </div>
+
+        <!-- Display the Speed Distribution Image -->
+        <div class="image-container">
+            <img src="{{ url_for('static', filename='average_fragment_speed_distribution.png') }}?t={{ timestamp if timestamp else '' }}" alt="Speed Distribution" class="speed-image">
+        </div>
+
+        <div class="schedules-container">
+            {% for train_number, schedule in schedules.items() %}
+                <div class="schedule-card">
+                    <div class="train-header">
+                        <h2>{{ train_number }}</h2>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>Station Name</th>
+                                    <th>Halt (min)</th>
+                                    <th>Arrival</th>
+                                    <th>Departure</th>
+                                    <th>Day</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for stop in schedule %}
+                                <tr>
+                                    <td class="station-name">{{ stop.station }}</td>
+                                    <td class="halt-time">{{ stop.halt }}</td>
+                                    <td>{{ stop.arrival if stop.arrival else '—' }}</td>
+                                    <td>{{ stop.departure if stop.departure else '—' }}</td>
+                                    <td class="day">{{ stop.day }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
